@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Lao Mao</title>
-  
+  <title>老毛的个人博客</title>
+  <subtitle>生命不息，学习不止</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://Mao-x-w.github.io/"/>
-  <updated>2017-03-07T09:07:08.724Z</updated>
+  <updated>2017-03-08T07:17:32.123Z</updated>
   <id>http://Mao-x-w.github.io/</id>
   
   <author>
@@ -14,6 +14,24 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>android</title>
+    <link href="http://Mao-x-w.github.io/2017/03/08/android/"/>
+    <id>http://Mao-x-w.github.io/2017/03/08/android/</id>
+    <published>2017-03-08T07:17:10.000Z</published>
+    <updated>2017-03-08T07:17:32.123Z</updated>
+    
+    <content type="html"><![CDATA[<head>android</head>]]></content>
+    
+    <summary type="html">
+    
+      &lt;head&gt;android&lt;/head&gt;
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Hello World</title>
