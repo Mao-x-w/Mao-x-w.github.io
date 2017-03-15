@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://Mao-x-w.github.io/"/>
-  <updated>2017-03-15T08:59:28.276Z</updated>
+  <updated>2017-03-15T09:01:55.454Z</updated>
   <id>http://Mao-x-w.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://Mao-x-w.github.io/2017/03/15/SimpleMvp-Data/"/>
     <id>http://Mao-x-w.github.io/2017/03/15/SimpleMvp-Data/</id>
     <published>2017-03-15T08:54:52.000Z</published>
-    <updated>2017-03-15T08:59:28.276Z</updated>
+    <updated>2017-03-15T09:01:55.454Z</updated>
     
     <content type="html"><![CDATA[<p>本文是对自己使用的项目SimpleMvp的Data层讲解，项目源码见github(<a href="https://github.com/Mao-x-w/SimpleMvp" target="_blank" rel="external">https://github.com/Mao-x-w/SimpleMvp</a>), 该项目是在git大神的android10的项目Android-CleanArchitecture基础上进行的更改，有兴趣的可以直接看该大神的源码：（<a href="https://github.com/android10/Android-CleanArchitecture）" target="_blank" rel="external">https://github.com/android10/Android-CleanArchitecture）</a></p>
 <p>首先说一下自己对继承、实现的体会，这些只是我自己为了加深记忆写的，对于我来说很有用，因为，我感觉人的大脑就像一个巨大的Map库，当我们看到一些东西的时候，实际对于大脑而言只是一个key,大脑会拿这个key去找对应的value，而下面这些体会，可以说就是对我之前踩的一些坑的key，看到这些描述，我就能想到当时是怎么出错的，走的那些弯路。当然，可能对大伙用处不大，感觉无用的请自动略过。直接看SimpleMvp的Data层讲解</p>
@@ -55,24 +55,6 @@
     <summary type="html">
     
       &lt;p&gt;本文是对自己使用的项目SimpleMvp的Data层讲解，项目源码见github(&lt;a href=&quot;https://github.com/Mao-x-w/SimpleMvp&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>android</title>
-    <link href="http://Mao-x-w.github.io/2017/03/08/android/"/>
-    <id>http://Mao-x-w.github.io/2017/03/08/android/</id>
-    <published>2017-03-08T07:17:10.000Z</published>
-    <updated>2017-03-08T07:17:32.123Z</updated>
-    
-    <content type="html"><![CDATA[<head>android</head>]]></content>
-    
-    <summary type="html">
-    
-      &lt;head&gt;android&lt;/head&gt;
     
     </summary>
     
