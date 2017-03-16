@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://Mao-x-w.github.io/"/>
-  <updated>2017-03-15T09:14:07.095Z</updated>
+  <updated>2017-03-16T06:25:18.035Z</updated>
   <id>http://Mao-x-w.github.io/</id>
   
   <author>
@@ -16,11 +16,71 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>SimpleMvp</title>
+    <link href="http://Mao-x-w.github.io/2017/03/16/SimpleMvp/"/>
+    <id>http://Mao-x-w.github.io/2017/03/16/SimpleMvp/</id>
+    <published>2017-03-16T06:20:04.000Z</published>
+    <updated>2017-03-16T06:25:18.035Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文是对自己使用的项目SimpleMvp的讲解，项目源码见github(<a href="https://github.com/Mao-x-w/SimpleMvp" target="_blank" rel="external">https://github.com/Mao-x-w/SimpleMvp</a>), 该项目是在git大神的android10的项目Android-CleanArchitecture基础上进行的更改，有兴趣的可以直接看该大神的源码：（<a href="https://github.com/android10/Android-CleanArchitecture）" target="_blank" rel="external">https://github.com/android10/Android-CleanArchitecture）</a></p>
+<p>本文主要讲解如何使用该Mvp框架，对于运用的Dagger2,Rxjava,Retrofit,Lamada技术不做讲解，不了解的哥们可以先自己学习一下。<br>这里推荐一些学习资料：</p>
+<p>Dagger2 使用详解：<a href="http://www.jianshu.com/p/94d47da32656" target="_blank" rel="external">http://www.jianshu.com/p/94d47da32656</a></p>
+<p>给 Android 开发者的 RxJava 详解：<a href="https://gank.io/post/560e15be2dca930e00da1083" target="_blank" rel="external">https://gank.io/post/560e15be2dca930e00da1083</a></p>
+<p> RxJava+Retrofit+OkHttp深入浅出：<a href="http://blog.csdn.net/wzgiceman/article/details/51939574" target="_blank" rel="external">http://blog.csdn.net/wzgiceman/article/details/51939574</a></p>
+<h2 id="mvp介绍"><a href="#mvp介绍" class="headerlink" title="mvp介绍"></a>mvp介绍</h2><h3 id="Domain层"><a href="#Domain层" class="headerlink" title="Domain层"></a>Domain层</h3><p>作为Presenter和Data层的桥梁，定义Repository接口，由Data层实现。定义UseCase类，从Repository接口获取数据，也就是从其实现类Data层获取数据。</p>
+<h3 id="Data层"><a href="#Data层" class="headerlink" title="Data层"></a>Data层</h3><p>依赖于Domain层，直接从服务器获取需要的数据，并通过实现Domain层的接口，将数据传递到Domain层中。</p>
+<h3 id="Presenter层"><a href="#Presenter层" class="headerlink" title="Presenter层"></a>Presenter层</h3><p>依赖于Domain层，通过使用Dagger2的依赖注入技术，将Domain层的UseCase注入到Presenter中，同时定义接口，用于向UI层返回数据。</p>
+<h3 id="UI层"><a href="#UI层" class="headerlink" title="UI层"></a>UI层</h3><p>依赖于Presenter层，将Presenter通过依赖注入方式注入到需要请求网络的地方（如：Activity，Adapter,Fragment等等），并实现Presenter层中定义的接口，以便拿到数据</p>
+<p><img src="http://omh5gy7p4.bkt.clouddn.com/mvp_desc.png" alt="image"></p>
+<h2 id="mvp模式好处"><a href="#mvp模式好处" class="headerlink" title="mvp模式好处"></a>mvp模式好处</h2><ul>
+<li>分离了视图逻辑和业务逻辑，降低了耦合，可以将业务逻辑写在Domain层中，而视图逻辑可以写到Presenter层中，对于UI层，只用于展示数据</li>
+<li>简化了UI层的代码，原来一个Activity很容易就上千行代码。使用MVP之后，Activity大大的瘦身了。</li>
+<li>提供了代码的可读性，方便后期维护</li>
+</ul>
+<h2 id="撸代码"><a href="#撸代码" class="headerlink" title="撸代码"></a>撸代码</h2><p>介绍了这么多，现在来看看具体在项目中的应用。在本项目中对代码做了高度封装，就不介绍封装方式了，有兴趣可以自己研究，主要介绍如何使用本项目完成一次网络请求。</p>
+<h3 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h3><p><img src="http://omh5gy7p4.bkt.clouddn.com/mvp_structure.png" alt="image"></p>
+<p>其中app对应为UI层，app_common层相当于一个工具类层，将所有层等能用到的放到了这一层，可以忽略不管这个。而app_domain,app_data,app_presenter分别为domain层，data层，presenter层</p>
+<h3 id="domain层代码"><a href="#domain层代码" class="headerlink" title="domain层代码"></a>domain层代码</h3><p><img src="http://omh5gy7p4.bkt.clouddn.com/mvp_domain_constructure.png" alt="image"></p>
+<p>首先定义IGeneralRepository接口：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public interface IGeneralRepository extends IRepository &#123;</div><div class="line"></div><div class="line">    Observable&lt;List&lt;GitUserModel&gt;&gt; getGitUsers();</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该接口主要目的是衔接Data层和Domain层，Data层有特定类实现类了该接口，从而调用该接口中的方法能返回Data层数据，详细讲解在Data层。</p>
+<p>IGeneralRepository接口衔接了Data层，而和Presenter层的交互是通过UseCase进行的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">@Singleton</div><div class="line">public class GitUsersUseCase extends UseCaseImpl&lt;IGeneralRepository,Object,List&lt;GitUserModel&gt;&gt; &#123;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 构造参数</div><div class="line">     *</div><div class="line">     * @param repository</div><div class="line">     * @param workThread   工作线程</div><div class="line">     * @param resultThread 结果执行线程</div><div class="line">     */</div><div class="line">    @Inject</div><div class="line">    public GitUsersUseCase(IGeneralRepository repository, ThreadExecutor workThread, PostExecutionThread resultThread) &#123;</div><div class="line">        super(repository, workThread, resultThread);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected Observable&lt;List&lt;GitUserModel&gt;&gt; buildUseCaseObservable(Object... objects) &#123;</div><div class="line">        return getRepository().getGitUsers();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在该类中通过getRepository().getGitUsers()获取到了IGeneralRepository的实现类中返回的数据，那么只要Presenter层拿到该UseCase对象，就相当于和Domain层建立了连接，而Presenter是依赖Doamin层，所以拿到对象很容易，不过我们这里使用的是Dagger2依赖注入拿到的UseCase对象，关于Dagger2的使用这里不做介绍。以后有时间单讲。</p>
+<p>Domain层不仅连接了Data层和Presenter层，同时，它也起到了一个约束的作用，所有请求和Data有关的代码都是这样做，这时，即使不写代码注释，思路依然很清闲，扩展性很强。</p>
+<h3 id="data层代码"><a href="#data层代码" class="headerlink" title="data层代码"></a>data层代码</h3><p>由于data层的数据来源很多，服务器、本地Json、数据库、内存等，这里我单独总结了一下，见个人博客：<a href="http://laomao.space/2017/03/15/SimpleMvp-Data/" target="_blank" rel="external">http://laomao.space/2017/03/15/SimpleMvp-Data/</a></p>
+<h3 id="presenter层代码"><a href="#presenter层代码" class="headerlink" title="presenter层代码"></a>presenter层代码</h3><p><img src="http://omh5gy7p4.bkt.clouddn.com/mvp_presenter_constructure.png" alt="image"></p>
+<p>通过dagger2得到Domain层中的UseCase对象。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">@Module</div><div class="line">public class GeneralModule &#123;</div><div class="line"></div><div class="line">    @Provides</div><div class="line">    @Named(Constants.NAMED_GIT_USERS)</div><div class="line">    UseCase&lt;Object,List&lt;GitUserModel&gt;&gt; provideGitUsersUseCase(IGeneralRepository repository, ThreadExecutor executor, PostExecutionThread thread)&#123;</div><div class="line">        return new GitUsersUseCase(repository,executor,thread);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>接着定义一个接口IGitUsersView用于连接UI层和Presenter层</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public interface IGitUsersView extends ILoadingView&#123;</div><div class="line"></div><div class="line">    void onGetGitUsers(List&lt;GitUser&gt; users);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个时候只需要一个中间者，将从UseCase中获取到的数据，传递给接口中的onGetGitUsers(List<gituser> users)，那么实现了该接口的UI层就能拿到了数据，这个中间者就是Presenter</gituser></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">public class GitUsersPresenter extends LoadingPresenter&lt;Object,Object,List&lt;GitUserModel&gt;,List&lt;GitUser&gt;,IGitUsersView&gt; &#123;</div><div class="line"></div><div class="line">    private GitUserMapper mGMapper;</div><div class="line"></div><div class="line">    @Inject</div><div class="line">    public GitUsersPresenter(</div><div class="line">            @Named(Constants.NAMED_GIT_USERS)</div><div class="line">            @NonNull UseCase&lt;Object, List&lt;GitUserModel&gt;&gt; useCase, GitUserMapper gMapper) &#123;</div><div class="line">        super(useCase);</div><div class="line">        mGMapper = gMapper;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void initialize(Object... objects) &#123;</div><div class="line">        execute(objects);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onNext(List&lt;GitUserModel&gt; gitUserModels) &#123;</div><div class="line">        super.onNext(gitUserModels);</div><div class="line">        getView().onGetGitUsers(mGMapper.transform(gitUserModels));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到在onNext方法中，返回了数据，具体怎么返回在GitUsersPresenter的父类中封装的呢，有兴趣自己研究，通过getView拿到IGitUsersView接口对象，并把数据传递给onGetGitUsers()方法。</p>
+<h3 id="UI层代码"><a href="#UI层代码" class="headerlink" title="UI层代码"></a>UI层代码</h3><p><img src="http://omh5gy7p4.bkt.clouddn.com/mvp_ui_constructure.png" alt="image"></p>
+<p>首先使用@Component注解一个连接器GeneralComponent<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@PerActivity</div><div class="line">@Component(dependencies = ApplicationComponent.class,modules = &#123;ActivityModule.class, GeneralModule.class&#125;)</div><div class="line">public interface GeneralComponent extends ActivityComponent&#123;</div><div class="line">    void inject(GitUsersActivity activity);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>它的作用是让那些想要使用Dagger2依赖注入的地方提供一个通道，而那些要使用地方来这里登记一下void inject(GitUsersActivity activity);因为我们在GitUsersActivity中要使用Presenter，所以这里将这个Activity登记一下。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">public class GitUsersActivity extends BaseActivity implements IGitUsersView &#123;</div><div class="line">    @Inject</div><div class="line">    GitUsersPresenter mPresenter;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(@Nullable Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_git_users);</div><div class="line"></div><div class="line">        // 初始化网络请求</div><div class="line">        DaggerGeneralComponent.builder().applicationComponent(getApplicationComponent()).activityModule(getActivityModule()).build().inject(this);</div><div class="line">        mPresenter.setView(this);</div><div class="line"></div><div class="line">        // 发起网络请求</div><div class="line">        mPresenter.initialize();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 网络请求返回数据</div><div class="line">     * @param users</div><div class="line">     */</div><div class="line">    @Override</div><div class="line">    public void onGetGitUsers(List&lt;GitUser&gt; users) &#123;</div><div class="line">        // 处理网络返回数据</div><div class="line">      </div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里把GitUsersPresenter注入到了GitUsersActivity中，虽然注入了，但GitUsersActivity不知道去哪里找，所以需要将GitUsersActivity在GeneralComponent中登记一下，DaggerGeneralComponent.builder().applicationComponent(getApplicationComponent()).activityModule(getActivityModule()).build().inject(this);<br>这个时候就可以使用Presenter实例了，使用mPresenter.setView(this)给Presenter设置View对象，这里用this是因为activity实现了Presenter层的接口IGitUserView，这样Presenter层就能拿到接口的实例对象，从而给UI层返回数据。最后通过mPresenter.initialize()发起网络请求，当然如果有参数可以在initialize()方法中添加。最后数据就通过实现了IGitUserView接口的onGetGitUsers(List<gituser> users)方法返回。</gituser></p>
+<p>至此，就成功的完成了一次网络请求。刚开始学习使用MVP,是很痛苦的，莫名其妙的加大了好多工作量，但是，如果你能坚持下来，你会发现后期维护起来非常容易。</p>
+<p>自从使用了MVP，妈妈再也不用担心我打产品经理了。 </p>
+<p>哈哈哈哈哈。。。。。。</p>
+<p>文笔太差，有不足地方请指正</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文是对自己使用的项目SimpleMvp的讲解，项目源码见github(&lt;a href=&quot;https://github.com/Mao-x-w/SimpleMvp&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/Mao-
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>SimpleMvp_Data</title>
     <link href="http://Mao-x-w.github.io/2017/03/15/SimpleMvp-Data/"/>
     <id>http://Mao-x-w.github.io/2017/03/15/SimpleMvp-Data/</id>
     <published>2017-03-15T08:54:52.000Z</published>
-    <updated>2017-03-15T09:14:07.095Z</updated>
+    <updated>2017-03-16T04:43:58.173Z</updated>
     
     <content type="html"><![CDATA[<p>本文是对自己使用的项目SimpleMvp的Data层讲解，项目源码见github(<a href="https://github.com/Mao-x-w/SimpleMvp" target="_blank" rel="external">https://github.com/Mao-x-w/SimpleMvp</a>), 该项目是在git大神的android10的项目Android-CleanArchitecture基础上进行的更改，有兴趣的可以直接看该大神的源码：（<a href="https://github.com/android10/Android-CleanArchitecture）" target="_blank" rel="external">https://github.com/android10/Android-CleanArchitecture）</a></p>
 <p>首先说一下自己对继承、实现的体会，这些只是我自己为了加深记忆写的，对于我来说很有用，因为，我感觉人的大脑就像一个巨大的Map库，当我们看到一些东西的时候，实际对于大脑而言只是一个key,大脑会拿这个key去找对应的value，而下面这些体会，可以说就是对我之前踩的一些坑的key，看到这些描述，我就能想到当时是怎么出错的，走的那些弯路。当然，可能对大伙用处不大，感觉无用的请自动略过。直接看SimpleMvp的Data层讲解</p>
@@ -32,7 +92,8 @@
 <li><p>继承，可以在共有的功能基础上扩展出来新功能。这样的好处是各个地方使用的是自己的继承过来的扩展类，当有多个地方使用这个类的时候，不同的功能都通过调用自己的类，而不去基类中找，就不会污染基类，增强了基类的扩展型，以及使用型。 </p>
 </li>
 </ul>
-<h3 id="SimpleMvp中Data层中的具体实现"><a href="#SimpleMvp中Data层中的具体实现" class="headerlink" title="SimpleMvp中Data层中的具体实现"></a>SimpleMvp中Data层中的具体实现</h3><p>Data层与Domain层对接是通过实现Domain层的接口，而domain层直接调用接口中的方法，就相当于拿到了Data层返回的数据，下面着重讲Data层。大家看的时候尽量对照着源码，这样学习比较省力，当然代码我也贴了出来。</p>
+<h3 id="SimpleMvp中Data层中的具体实现"><a href="#SimpleMvp中Data层中的具体实现" class="headerlink" title="SimpleMvp中Data层中的具体实现"></a>SimpleMvp中Data层中的具体实现</h3><p><img src="http://omh5gy7p4.bkt.clouddn.com/mvp_data_structure.png" alt="image"></p>
+<p>Data层与Domain层对接是通过实现Domain层的接口，而domain层直接调用接口中的方法，就相当于拿到了Data层返回的数据，下面着重讲Data层。大家看的时候尽量对照着源码，这样学习比较省力，当然代码我也贴了出来。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">@Singleton</div><div class="line">public class GeneralRepositoryImpl extends RepositoryImpl&lt;IGeneralDataStore, GeneralDataStoreFactory&gt; implements IGeneralRepository &#123;</div><div class="line"></div><div class="line">    private GitUserEntityMapper mGMapper;</div><div class="line"></div><div class="line">    @Inject</div><div class="line">    public GeneralRepositoryImpl(GeneralDataStoreFactory dataStoreFactory, GitUserEntityMapper gMapper) &#123;</div><div class="line">        super(dataStoreFactory);</div><div class="line">        mGMapper = gMapper;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Observable&lt;List&lt;GitUserModel&gt;&gt; getGitUsers() &#123;</div><div class="line">        return getNetDataStore().getGitUsers().map(mGMapper::transformTo);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>GeneralRepositoryImpl实现了IGeneralRepository接口，从而实现了其中的getGitUsers方法，而在该方法中调用getNetDataStore().getGitUsers()是调用</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public interface IGeneralDataStore extends IDataStore &#123;</div><div class="line"></div><div class="line">    Observable&lt;List&lt;GitUserEntity&gt;&gt; getGitUsers();</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
@@ -55,33 +116,6 @@
     <summary type="html">
     
       &lt;p&gt;本文是对自己使用的项目SimpleMvp的Data层讲解，项目源码见github(&lt;a href=&quot;https://github.com/Mao-x-w/SimpleMvp&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Hello World</title>
-    <link href="http://Mao-x-w.github.io/2017/03/07/hello-world/"/>
-    <id>http://Mao-x-w.github.io/2017/03/07/hello-world/</id>
-    <published>2017-03-07T09:07:08.724Z</published>
-    <updated>2017-03-16T02:46:29.882Z</updated>
-    
-    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">LaoMao</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;LaoMao&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hex
     
     </summary>
     
