@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://Mao-x-w.github.io/"/>
-  <updated>2017-04-13T06:50:34.405Z</updated>
+  <updated>2017-04-19T02:39:48.646Z</updated>
   <id>http://Mao-x-w.github.io/</id>
   
   <author>
@@ -14,6 +14,50 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>ImageView</title>
+    <link href="http://Mao-x-w.github.io/2017/04/19/ImageView/"/>
+    <id>http://Mao-x-w.github.io/2017/04/19/ImageView/</id>
+    <published>2017-04-19T02:39:03.000Z</published>
+    <updated>2017-04-19T02:39:48.646Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="ImageView的几种ScaleType理解"><a href="#ImageView的几种ScaleType理解" class="headerlink" title="ImageView的几种ScaleType理解"></a>ImageView的几种ScaleType理解</h3><p>ImageView是Android中的图片显示控件，有个ScaleType控制该控件的属性，该属性有7中取值：ScaleType.CENTER, ScaleType.CENTER_CROP, ScaleType.CENTER_INSIDE, ScaleType.FIT_CENTER, ScaleType.FIT_END, ScaleType.FIT_START, ScaleType.FIT_XY</p>
+<h4 id="CENTER"><a href="#CENTER" class="headerlink" title="CENTER"></a>CENTER</h4><p>图片大小为原始大小，不进行缩放，当图片大小大于ImageView的控件，那么直接取中间部分进行居中展示，如果图片大小小于ImageView的控件，那么直接居中展示。</p>
+<p>下面通过源码来理解一下。</p>
+<p>vwidth:ImageView的宽度</p>
+<p>vheight:ImageView的高度</p>
+<p>dwidth:Drawable的宽度，即图片的宽度</p>
+<p>dHeight:Drawable的高度，即图片的高度</p>
+<p>mDrawMatrix：Matrix（矩阵）对象，可以用来设置绘制图片时的位置、缩放比例等</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">else if (ScaleType.CENTER == mScaleType) &#123;</div><div class="line">    // Center bitmap in view, no scaling.</div><div class="line">    mDrawMatrix = mMatrix;</div><div class="line">    mDrawMatrix.setTranslate(Math.round((vwidth - dwidth) * 0.5f),</div><div class="line">                             Math.round((vheight - dheight) * 0.5f));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>根据代码可以知道，当vwidth&gt;dwidth，即Imageview的宽度大于图片宽度，那么就相当于把图片居中的放到ImageView中，从左上角开始绘制，而当vwidth&lt;dwidth,这个时候图片的宽度大于Imageview的宽度，这个时候上面的开始绘制位置就从负的开始，绘制出来我们也看不到，我们看到的就是居中显示。</p>
+<h4 id="CENTER-CROP"><a href="#CENTER-CROP" class="headerlink" title="CENTER_CROP"></a>CENTER_CROP</h4><p>将图片等比例缩放后，按ImageView的宽高取图片中间部分进行显示。不会使ImageView留空白。</p>
+<p>实现原理看源码：</p>
+<p>scale:缩放比例</p>
+<p>dx:绘制时x方向的偏移量<br>dy:绘制时y方向的偏移量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">else if (ScaleType.CENTER_CROP == mScaleType) &#123;</div><div class="line">    mDrawMatrix = mMatrix;</div><div class="line"></div><div class="line">    float scale;</div><div class="line">    float dx = 0, dy = 0;</div><div class="line"></div><div class="line">    if (dwidth * vheight &gt; vwidth * dheight) &#123;</div><div class="line">        scale = (float) vheight / (float) dheight;</div><div class="line">        dx = (vwidth - dwidth * scale) * 0.5f;</div><div class="line">    &#125; else &#123;</div><div class="line">        scale = (float) vwidth / (float) dwidth;</div><div class="line">        dy = (vheight - dheight * scale) * 0.5f;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    mDrawMatrix.setScale(scale, scale);</div><div class="line">    mDrawMatrix.postTranslate(Math.round(dx), Math.round(dy));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>dwidth <em> vheight &gt; vwidth </em> dheight这个条件直接理解不好理解，它等价于vheight/dheight&gt;vwidth/dwidth(当然宽高都为正值)，即当Imageview和图片的高度比例大于宽度比例，那么这个时候就按高度的比例进行缩放图片，可以理解为按较大的比例进行缩放，缩放后，大的那边的尺寸正好和Imageview吻合，而小的那边按大比例进行了缩放，尺寸肯定比ImageView大，这个时候通过设置绘制位置进行居中绘制,进行了裁剪。</p>
+<h4 id="CENTER-INSIDE"><a href="#CENTER-INSIDE" class="headerlink" title="CENTER_INSIDE"></a>CENTER_INSIDE</h4><p>如果图片大小大于ImageView的大小，那么进行等比例缩放，直到图片可以正好居中显示在ImageView中，不进行裁剪。如果图片大小小于ImageView的大小，那么直接居中显示。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">else if (ScaleType.CENTER_INSIDE == mScaleType) &#123;</div><div class="line">    mDrawMatrix = mMatrix;</div><div class="line">    float scale;</div><div class="line">    float dx;</div><div class="line">    float dy;</div><div class="line"></div><div class="line">    // 如果图片宽高都小于ImageView的宽高，不进行缩放</div><div class="line">    if (dwidth &lt;= vwidth &amp;&amp; dheight &lt;= vheight) &#123;</div><div class="line">        scale = 1.0f;</div><div class="line">    &#125; else &#123;</div><div class="line">        scale = Math.min((float) vwidth / (float) dwidth,</div><div class="line">                (float) vheight / (float) dheight);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    dx = Math.round((vwidth - dwidth * scale) * 0.5f);</div><div class="line">    dy = Math.round((vheight - dheight * scale) * 0.5f);</div><div class="line"></div><div class="line">    mDrawMatrix.setScale(scale, scale);</div><div class="line">    mDrawMatrix.postTranslate(dx, dy);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>由上面源码可知，当图片大小大于ImageView的大小的时候，才进行缩放，缩放标准是按图片的相对大边对应的比例进行缩放，因为大边如果都完整的放到了ImageView里面了，那么小边也放进去了。对应到比例上是vwidth/dwidth(Imageview的宽度比上图片宽度)，正好相反，取比例小的值。</p>
+<h4 id="FIT-XY"><a href="#FIT-XY" class="headerlink" title="FIT_XY"></a>FIT_XY</h4><p>将图片非等比例缩放到大小与ImageView相等</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">if (dwidth &lt;= 0 || dheight &lt;= 0 || ScaleType.FIT_XY == mScaleType) &#123;</div><div class="line">    /* If the drawable has no intrinsic size, or we&apos;re told to</div><div class="line">        scaletofit, then we just fill our entire view.</div><div class="line">    */</div><div class="line">    mDrawable.setBounds(0, 0, vwidth, vheight);</div><div class="line">    mDrawMatrix = null;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>setBounds方法源码解释是<br>Specify a bounding rectangle for the Drawable. This is where the drawable will draw when its draw() method is called。意思是根据指定的矩形框大小来将图片画出来。几个参数是左、上、右、下</p>
+<p>上面的源码中正好表示出来绘制大小为ImageView的大小。</p>
+<h4 id="FIT-CENTER"><a href="#FIT-CENTER" class="headerlink" title="FIT_CENTER"></a>FIT_CENTER</h4><p>如果图片尺寸大于ImageView，那么将图片尺寸等比例缩小、反之，将图片尺寸等比例放大，最后使图片能正好能居中的显示在ImageView中</p>
+<h4 id="FIT-START"><a href="#FIT-START" class="headerlink" title="FIT_START"></a>FIT_START</h4><p>缩放方式和FIT_CENTER一样，只是将图片显示在左方或上方</p>
+<h4 id="FIT-END"><a href="#FIT-END" class="headerlink" title="FIT_END"></a>FIT_END</h4><p>缩放方式和FIT_CENTER一样，只是将图片显示在右方或下方</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;ImageView的几种ScaleType理解&quot;&gt;&lt;a href=&quot;#ImageView的几种ScaleType理解&quot; class=&quot;headerlink&quot; title=&quot;ImageView的几种ScaleType理解&quot;&gt;&lt;/a&gt;ImageView的几种Scale
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>personalSite</title>
