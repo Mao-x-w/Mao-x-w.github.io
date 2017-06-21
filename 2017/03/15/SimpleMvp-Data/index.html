@@ -14,13 +14,13 @@
 <meta property="og:url" content="http://Mao-x-w.github.io/2017/03/15/SimpleMvp-Data/index.html">
 <meta property="og:site_name" content="老毛的个人博客">
 <meta property="og:description" content="本文是对自己使用的项目SimpleMvp的Data层讲解，项目源码见github(https://github.com/Mao-x-w/SimpleMvp), 该项目是在git大神的android10的项目Android-CleanArchitecture基础上进行的更改，有兴趣的可以直接看该大神的源码：（https://github.com/android10/Android-CleanArch">
-<meta property="og:image" content="http://omh5gy7p4.bkt.clouddn.com/mvp_data_structure.png">
+<meta property="og:image" content="http://omh5gy7p4.bkt.clouddn.com/mvp_data_contructure.png">
 <meta property="og:image" content="http://omh5gy7p4.bkt.clouddn.com/mvp_data_working_line.png">
-<meta property="og:updated_time" content="2017-03-16T04:43:58.173Z">
+<meta property="og:updated_time" content="2017-06-21T02:01:00.070Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SimpleMvp_Data">
 <meta name="twitter:description" content="本文是对自己使用的项目SimpleMvp的Data层讲解，项目源码见github(https://github.com/Mao-x-w/SimpleMvp), 该项目是在git大神的android10的项目Android-CleanArchitecture基础上进行的更改，有兴趣的可以直接看该大神的源码：（https://github.com/android10/Android-CleanArch">
-<meta name="twitter:image" content="http://omh5gy7p4.bkt.clouddn.com/mvp_data_structure.png">
+<meta name="twitter:image" content="http://omh5gy7p4.bkt.clouddn.com/mvp_data_contructure.png">
   
   
     <link rel="icon" href="/favicon.png">
@@ -176,7 +176,7 @@
 <li><p>继承，可以在共有的功能基础上扩展出来新功能。这样的好处是各个地方使用的是自己的继承过来的扩展类，当有多个地方使用这个类的时候，不同的功能都通过调用自己的类，而不去基类中找，就不会污染基类，增强了基类的扩展型，以及使用型。 </p>
 </li>
 </ul>
-<h3 id="SimpleMvp中Data层中的具体实现"><a href="#SimpleMvp中Data层中的具体实现" class="headerlink" title="SimpleMvp中Data层中的具体实现"></a>SimpleMvp中Data层中的具体实现</h3><p><img src="http://omh5gy7p4.bkt.clouddn.com/mvp_data_structure.png" alt="image"></p>
+<h3 id="SimpleMvp中Data层中的具体实现"><a href="#SimpleMvp中Data层中的具体实现" class="headerlink" title="SimpleMvp中Data层中的具体实现"></a>SimpleMvp中Data层中的具体实现</h3><p><img src="http://omh5gy7p4.bkt.clouddn.com/mvp_data_contructure.png" alt="image"></p>
 <p>Data层与Domain层对接是通过实现Domain层的接口，而domain层直接调用接口中的方法，就相当于拿到了Data层返回的数据，下面着重讲Data层。大家看的时候尽量对照着源码，这样学习比较省力，当然代码我也贴了出来。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">@Singleton</div><div class="line">public class GeneralRepositoryImpl extends RepositoryImpl&lt;IGeneralDataStore, GeneralDataStoreFactory&gt; implements IGeneralRepository &#123;</div><div class="line"></div><div class="line">    private GitUserEntityMapper mGMapper;</div><div class="line"></div><div class="line">    @Inject</div><div class="line">    public GeneralRepositoryImpl(GeneralDataStoreFactory dataStoreFactory, GitUserEntityMapper gMapper) &#123;</div><div class="line">        super(dataStoreFactory);</div><div class="line">        mGMapper = gMapper;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Observable&lt;List&lt;GitUserModel&gt;&gt; getGitUsers() &#123;</div><div class="line">        return getNetDataStore().getGitUsers().map(mGMapper::transformTo);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>GeneralRepositoryImpl实现了IGeneralRepository接口，从而实现了其中的getGitUsers方法，而在该方法中调用getNetDataStore().getGitUsers()是调用</p>
