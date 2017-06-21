@@ -83,9 +83,9 @@
     <link href="http://Mao-x-w.github.io/2017/03/16/SimpleMvp/"/>
     <id>http://Mao-x-w.github.io/2017/03/16/SimpleMvp/</id>
     <published>2017-03-16T06:20:04.000Z</published>
-    <updated>2017-03-16T06:25:18.035Z</updated>
+    <updated>2017-06-21T01:50:39.096Z</updated>
     
-    <content type="html"><![CDATA[<p>本文是对自己使用的项目SimpleMvp的讲解，项目源码见github(<a href="https://github.com/Mao-x-w/SimpleMvp" target="_blank" rel="external">https://github.com/Mao-x-w/SimpleMvp</a>), 该项目是在git大神的android10的项目Android-CleanArchitecture基础上进行的更改，有兴趣的可以直接看该大神的源码：（<a href="https://github.com/android10/Android-CleanArchitecture）" target="_blank" rel="external">https://github.com/android10/Android-CleanArchitecture）</a></p>
+    <content type="html"><![CDATA[<p>本文是对自己使用的项目SimpleMvp的讲解，项目源码见github(<a href="https://github.com/Mao-x-w/SimpleMvp" target="_blank" rel="external">https://github.com/Mao-x-w/SimpleMvp</a>), 该项目是在git大神的android10的项目Android-CleanArchitecture基础上进行的更改，有兴趣的可以直接看该大神的源码：<a href="https://github.com/android10/Android-CleanArchitecture" target="_blank" rel="external">https://github.com/android10/Android-CleanArchitecture</a></p>
 <p>本文主要讲解如何使用该Mvp框架，对于运用的Dagger2,Rxjava,Retrofit,Lamada技术不做讲解，不了解的哥们可以先自己学习一下。<br>这里推荐一些学习资料：</p>
 <p>Dagger2 使用详解：<a href="http://www.jianshu.com/p/94d47da32656" target="_blank" rel="external">http://www.jianshu.com/p/94d47da32656</a></p>
 <p>给 Android 开发者的 RxJava 详解：<a href="https://gank.io/post/560e15be2dca930e00da1083" target="_blank" rel="external">https://gank.io/post/560e15be2dca930e00da1083</a></p>
