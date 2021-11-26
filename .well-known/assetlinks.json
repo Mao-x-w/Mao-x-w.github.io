@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.example.lmgradle",
+    "sha256_cert_fingerprints":
+    ["9D:77:D2:52:91:DB:9A:A6:07:6B:63:00:15:42:34:18:5C:30:53:70:1A:90:32:76:DC:66:99:B4:22:33:A7:2F"]
+  }
+}]
